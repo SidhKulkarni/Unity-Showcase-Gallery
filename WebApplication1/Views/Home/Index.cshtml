@@ -5,6 +5,10 @@
 }
 
 <div>
-	@Html.Raw(ViewBag.htmlStr)
+	<h1>@Html.Raw(ViewBag.game) @Html.Raw(ViewBag.studio)</h1>
+	<div>@Html.Raw(ViewBag.bg)</div>
+	<div>
+		@Html.Raw(ViewBag.htmlStr)
+	</div>
 </div>
 

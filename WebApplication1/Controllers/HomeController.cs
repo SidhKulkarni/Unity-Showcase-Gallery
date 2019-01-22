@@ -36,14 +36,35 @@ namespace WebApplication1.Controllers
             html.Load(reader.OpenRead(url), System.Text.Encoding.UTF8);
 
             HtmlNode main = html.DocumentNode.SelectSingleNode("//*[@id='main']");
-            /*foreach (HtmlNode node in main.Descendants()) //main.SelectNodes("//div").Where(n => n.Attributes["class"].Value.Equals("section-overlay-menu")))
-            {
-                if (node.Attributes["class"] != null && node.Attributes["class"].Value.Equals("section-overlay-menu"))
-                {
-                    node.Remove();
-                }
-            }*/
 
+            // Remove unwanted divs
+
+            foreach (HtmlNode node in main.SelectNodes("//h1"))
+            {
+                if (node.GetAttributeValue("class", "").Equals("section-hero-title title-huge gsap-text-1"))
+                {
+                    ViewBag.game = node.InnerHtml;
+                    node.SetAttributeValue("style", "visibility: hidden");
+                }
+            }
+
+            foreach (HtmlNode node in main.SelectNodes("//div"))
+            {
+                if (node.GetAttributeValue("class", "").Equals("section-hero-studio"))
+                {
+                    ViewBag.studio = node.InnerHtml;
+                }
+                if (node.GetAttributeValue("class", "").Equals("section section-story-hero"))
+                {
+                    string style = node.GetAttributeValue("style", "");
+                    style = style.Substring(0, style.Length - 4).Substring(28);
+                    style = "<img src='" + style + "' style:'max-width:100%;'>";
+                    ViewBag.bg = style;
+                    node.SetAttributeValue("style", "display:none");
+                }
+            }
+            
+            // Fix links to display images
             foreach (HtmlNode node in main.SelectNodes("//img[@src]"))
             {
                 string src = "https://unity.com" + node.Attributes["src"].Value;
@@ -54,7 +75,7 @@ namespace WebApplication1.Controllers
             string result = main.OuterHtml;
 
             ViewBag.htmlStr = result; // Store html for display
-
+            
             return View();
         }
 
@@ -136,6 +157,11 @@ namespace WebApplication1.Controllers
             cookie.Values.Add(name2, val2);
 
             Response.Cookies.Add(cookie);
+        }
+
+        public ActionResult About()
+        {
+            return View();
         }
     }
 }
